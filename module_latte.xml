@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_latte" default="compile.module.latte">
+  <dirname property="module.latte.basedir" file="${ant.file.module_latte}"/>
+  
+  <property name="module.jdk.home.latte" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.latte" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.latte" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.latte" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="latte.output.dir" value="${module.latte.basedir}/out/production/Latte"/>
+  <property name="latte.testoutput.dir" value="${module.latte.basedir}/out/test/Latte"/>
+  
+  <path id="latte.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="latte.module.production.classpath">
+    <path refid="${module.jdk.classpath.latte}"/>
+    <path refid="library.json-20160810.classpath"/>
+  </path>
+  
+  <path id="latte.runtime.production.module.classpath">
+    <pathelement location="${latte.output.dir}"/>
+    <path refid="library.json-20160810.classpath"/>
+  </path>
+  
+  <path id="latte.module.classpath">
+    <path refid="${module.jdk.classpath.latte}"/>
+    <pathelement location="${latte.output.dir}"/>
+    <path refid="library.json-20160810.classpath"/>
+  </path>
+  
+  <path id="latte.runtime.module.classpath">
+    <pathelement location="${latte.testoutput.dir}"/>
+    <pathelement location="${latte.output.dir}"/>
+    <path refid="library.json-20160810.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.latte">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.latte">
+    <patternset refid="excluded.from.module.latte"/>
+  </patternset>
+  
+  <path id="latte.module.sourcepath">
+    <dirset dir="${module.latte.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.latte" depends="compile.module.latte.production,compile.module.latte.tests" description="Compile module Latte"/>
+  
+  <target name="compile.module.latte.production" depends="register.custom.compilers" description="Compile module Latte; production classes">
+    <mkdir dir="${latte.output.dir}"/>
+    <javac2 destdir="${latte.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.latte}/javac">
+      <compilerarg line="${compiler.args.latte}"/>
+      <bootclasspath refid="latte.module.bootclasspath"/>
+      <classpath refid="latte.module.production.classpath"/>
+      <src refid="latte.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.latte"/>
+    </javac2>
+    
+    <copy todir="${latte.output.dir}">
+      <fileset dir="${module.latte.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.latte.tests" depends="register.custom.compilers,compile.module.latte.production" description="compile module Latte; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.latte" description="cleanup module">
+    <delete dir="${latte.output.dir}"/>
+    <delete dir="${latte.testoutput.dir}"/>
+  </target>
+</project>

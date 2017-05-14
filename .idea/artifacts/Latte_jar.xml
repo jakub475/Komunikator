@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Latte:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Latte_jar</output-path>
+    <root id="archive" name="Latte.jar">
+      <element id="module-output" name="Latte" />
+    </root>
+  </artifact>
+</component>
